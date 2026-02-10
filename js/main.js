@@ -51,7 +51,7 @@ function renderTodo(arr){
             <div class="flex items-start gap-2 flex-1 ">
                 <span class="block font-black text-[14px] mt-[3px] flex-shrink-0">${index + 1}.</span>
                 <p class="text-[16px] block ${item.isCompleted ? "line-through" : ""} break-all flex-1">${item.value}</p>
-                ${item.imgURL ? `<div class=" flex-shrink-0 w-[70px] h-[50px] rounded overflow-hidden border border-gray-200"> <img class="w-full h-full object-cover " src="${item.imgURL}" alt="uploaded-img"> </div>` : ""}
+                ${item.imgURL ? `<div class=" flex-shrink-0 w-[70px] h-[50px] rounded overflow-hidden border border-gray-500 shadow-[0_2px_7px_2px_rgba(80,90,110,0.4)]"> <img class="w-full h-full object-cover " src="${item.imgURL}" alt="uploaded-img"> </div>` : ""}
             </div>
 
             <div class="max-w-[190px] flex items-center gap-[10px]">
@@ -99,11 +99,11 @@ elTodoList.addEventListener("click", function(e){
                 <label>
                     <input class="w-full sm:py-[11px] py-[5px] sm:px-[15px] px-[10px] rounded-lg border-[2px] border-[#32A3FE] outline-none placeholder:text-[#32A3FE]" type="text" value="${findedUpdatedObj.value}" name="user_updated" placeholder="Update your note..." autocomplete="off">
                 </label>
-                <label for="update-file-input" class="block sm:mt-6 mt-4 cursor-pointer block">
+                <label for="update-file-input" class="block sm:mt-5 mt-4 cursor-pointer ">
                     <input id="update-file-input" class="hidden update-files " type="file">
-                    <img class="update-img rounded-md sm:mt-6 mt-4 mx-auto cursor-pointer object-cover" src="${findedUpdatedObj.imgURL ? findedUpdatedObj.imgURL : './images/uploaded-img.jpg'}" alt="updated-img" width="100" height="100">
+                    <img class="update-img sm:max-w-[130px] sm:max-h-[130px] max-w-[100px] max-h-[100px] rounded-md  mx-auto cursor-pointer border object-cover shadow-[0_2px_7px_2px_rgba(80,90,110,0.4)]" src="${findedUpdatedObj.imgURL ? findedUpdatedObj.imgURL : './images/uploaded-img.jpg'}" alt="updated-img" width="130" height="130">
                 </label>
-                <div class="flex items-center justify-between sm:mt-[70px] mt-[50px]">
+                <div class="flex items-center justify-between sm:mt-[40px] mt-[40px]">
                     <button onclick="handleCancelBtn()" class="sm:w-[100px] w-[80px] sm:py-[10px] py-[7px] rounded-lg hover:bg-[#32A3FE] hover:text-white duration-500 border-[2px] border-[#32A3FE] text-[#32A3FE] cursor-pointer" type="button">Cancel</button>
                     <button class="sm:w-[100px] w-[80px] sm:py-[10px] py-[7px] rounded-lg hover:bg-transparent hover:text-[#32A3FE] duration-500 bg-[#32A3FE] border-[2px] border-[#32A3FE] text-white cursor-pointer" type="submit">Apply</button>
                 </div>
@@ -112,6 +112,7 @@ elTodoList.addEventListener("click", function(e){
         let elUpdateForm = document.querySelector(".update-form")
         let elUpdateImg = document.querySelector(".update-img")
         let elUpdateFiles = document.querySelector(".update-files")
+        
         
         elUpdateFiles.addEventListener("change", function(e){
             if(e.target.files[0]){
@@ -123,7 +124,18 @@ elTodoList.addEventListener("click", function(e){
             e.preventDefault()
             
             findedUpdatedObj.value = e.target.user_updated.value
-            findedUpdatedObj.imgURL = elUpdateImg.src
+
+            const isPlasholder = elUpdateImg.src.includes("./images/uploaded-img.jpg")
+            const hasNewImg = elUpdateFiles.files[0] !== undefined 
+
+            if(hasNewImg){
+                findedUpdatedObj.imgURL = elUpdateImg.src 
+            }
+            else if(isPlasholder && !findedUpdatedObj.imgURL){
+                findedUpdatedObj.imgURL = null
+            }
+
+            // findedUpdatedObj.imgURL = elUpdateImg.src ? elUpdateImg.src : null
             elWrapperModal.classList.add("scale-0")
             document.body.classList.remove("overflow-y-hidden")
             renderTodo(todo)
