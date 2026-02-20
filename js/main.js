@@ -16,7 +16,10 @@ let elChoosenImg = document.querySelector(".choosen-img")
 let elUploadedImg = document.querySelector(".uploaded-img")
 
 
+
+
 let todo = JSON.parse(localStorage.getItem("setTodo")) || []
+console.log(todo);
 
 
 elForm.addEventListener("submit", function(e){
@@ -30,7 +33,6 @@ elForm.addEventListener("submit", function(e){
         id:Date.now(),
         value:elInput.value,
         isCompleted:false,
-        UnCompleted:true ,
         imgURL: e.target.choosenImg.files[0] ? URL.createObjectURL(e.target.choosenImg.files[0]) : null
     }
     e.target.reset()
@@ -54,11 +56,11 @@ function renderTodo(arr){
                 ${item.imgURL ? `<div class=" flex-shrink-0 w-[70px] h-[50px] rounded overflow-hidden border border-gray-500 shadow-[0_2px_7px_2px_rgba(80,90,110,0.4)]"> <img class="w-full h-full object-cover " src="${item.imgURL}" alt="uploaded-img"> </div>` : ""}
             </div>
 
-            <div class="max-w-[190px] flex items-center gap-[10px]">
+            <div class="contain-btn max-w-[190px] flex items-center gap-[10px]">
                 <button id="${item.id}" type="button" class="delete-btn hover:scale-125 duration-300 cursor-pointer">
                     <img class="pointer-events-none" src="./images/delete-icon.svg" alt="delete-icon" width="20" height="20">
                 </button>
-                <button id="${item.id}" class="update-btn hover:scale-125 duration-300 cursor-pointer">
+                <button id="${item.id}" class="update-btn duration-300  ${item.isCompleted ? 'opacity-50 cursor-not-allowed' : "cursor-pointer hover:scale-125"}" ${item.isCompleted ? 'disabled' : ''} >
                     <img class="pointer-events-none" src="./images/update-icon.svg" alt="update-icon" width="20" height="20">
                 </button>
                 <button onclick="handleCompleteBtn(${item.id})"class="hover:scale-125 duration-300 cursor-pointer ${item.isCompleted ? "hidden" : "block"}">
@@ -71,7 +73,7 @@ function renderTodo(arr){
     });
     
     elAllCount.textContent = todo.length
-    elUnCompletedCount.textContent = todo.filter(item => item.UnCompleted == true).length
+    elUnCompletedCount.textContent = todo.filter(item => item.isCompleted != true).length
     elIsCompletedCount.textContent = todo.filter(item => item.isCompleted == true).length
 }
 renderTodo(todo)
@@ -80,7 +82,7 @@ renderTodo(todo)
 // delete function start
 elTodoList.addEventListener("click", function(e){
     if(e.target.matches(".delete-btn")){
-        const ItemDeleteId = e.target.id
+        const ItemDeleteId = Number(e.target.id)
         const findedDeleteIndex = todo.findIndex(item => item.id == ItemDeleteId)
         todo.splice(findedDeleteIndex, 1)
         renderTodo(todo)
@@ -164,7 +166,6 @@ function handleCancelBtn(){
 function handleCompleteBtn(id){
     const findedCompleteObj = todo.find(item => item.id == id)
     findedCompleteObj.isCompleted = !findedCompleteObj.isCompleted
-    findedCompleteObj.UnCompleted = !findedCompleteObj.isCompleted    
     renderTodo(todo)
     localStorage.setItem("setTodo", JSON.stringify(todo))  
 }
@@ -173,12 +174,12 @@ function handleAllbox(){
     renderTodo(todo)   
 }
 function handleUnCompletedBox(){
-    const filteredUncompletedArr = todo.filter(item => item.UnCompleted == true)
+    const filteredUncompletedArr = todo.filter(item => item.isCompleted != true)
     renderTodo(filteredUncompletedArr)
 }
 function handleIsCompletedBox(){
-    const elIsCompletedCount = todo.filter(item => item.isCompleted == true)
-    renderTodo(elIsCompletedCount)
+    const filteredCompletedArr = todo.filter(item => item.isCompleted == true)
+    renderTodo(filteredCompletedArr)
 }
 // isCompleted start 
 
