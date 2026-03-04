@@ -15,7 +15,7 @@ let elIsCompletedCount = document.querySelector(".isCompleted-count")
 let elChoosenImg = document.querySelector(".choosen-img")
 let elUploadedImg = document.querySelector(".uploaded-img")
 
-
+let currentFilter = 'all'
 
 
 let todo = JSON.parse(localStorage.getItem("setTodo")) || []
@@ -163,21 +163,36 @@ function handleCancelBtn(){
 // Updated open and close end 
 
 // isCompleted start 
+function applyCurrentFilter(){
+    if(currentFilter === 'uncompleted'){
+        renderTodo(todo.filter(item => !item.isCompleted))
+    } 
+    else if(currentFilter === 'completed'){
+        renderTodo(todo.filter(item => item.isCompleted))
+    } 
+    else {
+        renderTodo(todo)
+    }
+}
+
 function handleCompleteBtn(id){
     const findedCompleteObj = todo.find(item => item.id == id)
     findedCompleteObj.isCompleted = !findedCompleteObj.isCompleted
-    renderTodo(todo)
+    applyCurrentFilter()
     localStorage.setItem("setTodo", JSON.stringify(todo))  
 }
 
 function handleAllbox(){
+    currentFilter = 'all'
     renderTodo(todo)   
 }
 function handleUnCompletedBox(){
+    currentFilter = 'uncompleted'
     const filteredUncompletedArr = todo.filter(item => item.isCompleted != true)
     renderTodo(filteredUncompletedArr)
 }
 function handleIsCompletedBox(){
+    currentFilter = 'completed'
     const filteredCompletedArr = todo.filter(item => item.isCompleted == true)
     renderTodo(filteredCompletedArr)
 }
